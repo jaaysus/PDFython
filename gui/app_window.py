@@ -1,0 +1,57 @@
+import tkinter as tk
+from tkinter import filedialog, messagebox
+from core.txt_to_pdf import convert_txt_to_pdf
+from core.excel_to_pdf import convert_excel_to_pdf
+from core.pdf_text_extractor import extract_text_from_pdf
+
+class AppWindow:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("PDFython - PDF Management")
+        self.root.geometry("300x200")
+
+        # Buttons
+        self.txt_to_pdf_btn = tk.Button(root, text="Convert TXT to PDF", command=self.convert_txt)
+        self.txt_to_pdf_btn.pack(pady=5)
+
+        self.excel_to_pdf_btn = tk.Button(root, text="Convert Excel to PDF", command=self.convert_excel)
+        self.excel_to_pdf_btn.pack(pady=5)
+
+        self.extract_text_btn = tk.Button(root, text="Extract Text from PDF", command=self.extract_text)
+        self.extract_text_btn.pack(pady=5)
+
+        self.exit_btn = tk.Button(root, text="Exit", command=root.quit)
+        self.exit_btn.pack(pady=5)
+
+    def convert_txt(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Text Files", "*.txt")])
+        if file_path:
+            save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
+            if save_path:
+                try:
+                    convert_txt_to_pdf(file_path, save_path)
+                    messagebox.showinfo("Success", "TXT file converted to PDF successfully!")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to convert TXT to PDF: {e}")
+
+    def convert_excel(self):
+        file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
+        if file_path:
+            save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
+            if save_path:
+                try:
+                    convert_excel_to_pdf(file_path, save_path)
+                    messagebox.showinfo("Success", "Excel file converted to PDF successfully!")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to convert Excel to PDF: {e}")
+
+    def extract_text(self):
+        file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
+        if file_path:
+            save_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
+            if save_path:
+                try:
+                    extract_text_from_pdf(file_path, save_path)
+                    messagebox.showinfo("Success", "Text extracted from PDF successfully!")
+                except Exception as e:
+                    messagebox.showerror("Error", f"Failed to extract text from PDF: {e}")
