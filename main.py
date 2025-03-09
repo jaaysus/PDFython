@@ -1,10 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
-import pdfplumber
-import openpyxl
-import chardet
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
+from core.txt_to_pdf import convert_txt_to_pdf
+from core.excel_to_pdf import convert_excel_to_pdf
+from core.pdf_text_extractor import extract_text_from_pdf
 
 
 class PDFythonApp:
@@ -25,41 +23,13 @@ class PDFythonApp:
         if not file_path:
             return
 
+        save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
+        if not save_path:
+            return
+
         try:
-            
-            with open(file_path, "rb") as file:
-                raw_data = file.read()
-                result = chardet.detect(raw_data)  
-                encoding = result["encoding"]
-
-            
-            with open(file_path, "r", encoding=encoding, errors="replace") as file:
-                content = file.read()
-
-            save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
-            if not save_path:
-                return
-
-            
-            c = canvas.Canvas(save_path, pagesize=letter)
-            c.setFont("Helvetica", 12)
-
-            
-            y_position = 750  
-
-            for line in content.splitlines():
-                c.drawString(72, y_position, line)  
-                y_position -= 14  
-
-                
-                if y_position < 72:
-                    c.showPage()
-                    c.setFont("Helvetica", 12)
-                    y_position = 750
-
-            c.save()
+            convert_txt_to_pdf(file_path, save_path)
             messagebox.showinfo("Success", "TXT converted to PDF successfully!")
-
         except Exception as e:
             messagebox.showerror("Error", f"Failed to convert TXT: {e}")
 
@@ -68,33 +38,13 @@ class PDFythonApp:
         if not file_path:
             return
 
+        save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
+        if not save_path:
+            return
+
         try:
-            wb = openpyxl.load_workbook(file_path)
-            ws = wb.active
-
-            save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
-            if not save_path:
-                return
-
-            
-            c = canvas.Canvas(save_path, pagesize=letter)
-            c.setFont("Helvetica", 12)
-
-            
-            y_position = 750
-            for row in ws.iter_rows(values_only=True):
-                line = " | ".join(str(cell) for cell in row)
-                c.drawString(72, y_position, line)
-                y_position -= 14
-
-                if y_position < 72:
-                    c.showPage()
-                    c.setFont("Helvetica", 12)
-                    y_position = 750
-
-            c.save()
+            convert_excel_to_pdf(file_path, save_path)
             messagebox.showinfo("Success", "Excel converted to PDF successfully!")
-
         except Exception as e:
             messagebox.showerror("Error", f"Failed to convert Excel: {e}")
 
@@ -103,20 +53,13 @@ class PDFythonApp:
         if not file_path:
             return
 
-        try:
-            extracted_text = ""
-            with pdfplumber.open(file_path) as pdf:
-                for page in pdf.pages:
-                    extracted_text += page.extract_text() + "\n"
-
-            save_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
-            if save_path:
-                with open(save_path, "w", encoding="utf-8") as file:
-                    file.write(extracted_text)
+        save_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
+        if save_path:
+            try:
+                extract_text_from_pdf(file_path, save_path)
                 messagebox.showinfo("Success", "Text extracted and saved!")
-
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to extract text: {e}")
+            except Exception as e:
+                messagebox.showerror("Error", f"Failed to extract text: {e}")
 
 
 if __name__ == "__main__":
