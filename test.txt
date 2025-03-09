@@ -1,0 +1,34 @@
+Test Case 1: Basic Latin Characters
+-----------------------------------
+This is a simple text file with basic Latin characters.
+The quick brown fox jumps over the lazy dog.
+ABCDEFGHIJKLM NOPQRSTUVWXYZ
+abcdefghijklmnopqrstuvwxyz
+
+Test Case 2: Extended Latin Characters (Accents and Special Characters)
+----------------------------------------------------------------------
+This is a test file with extended Latin characters.
+á, é, í, ó, ú
+ç, ñ, ü, æ, œ
+Téma: "Français" — testing encoding.
+
+Test Case 3: Non-Latin Characters (Unicode Test)
+------------------------------------------------
+你好，世界！ 这是一个测试文件。 (Chinese characters)
+Привет, мир! Это тестовый файл. (Russian characters)
+안녕하세요, 세계! 테스트 파일입니다. (Korean characters)
+
+Test Case 4: Special Symbols and Punctuation
+-------------------------------------------
+Special symbols: ©, ®, ™, €, £, ¥, ¶, ÷, ≠, ∑
+Mathematical symbols: ∆, √, ∫, ∑
+Programming symbols: <, >, {, }, [, ], |, ;, &, %, @, #
+
+Test Case 5: Large File with Random Text (Stress Test)
+-----------------------------------------------------
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+(Repeat the above line until you reach a sizable length)
