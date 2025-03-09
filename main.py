@@ -3,7 +3,8 @@ from tkinter import filedialog, messagebox
 import pdfplumber
 from fpdf import FPDF
 import openpyxl
-import os
+import chardet
+
 
 class PDFythonApp:
     def __init__(self, root):
@@ -29,14 +30,27 @@ class PDFythonApp:
         pdf.add_page()
         pdf.set_font("Arial", size=12)
 
-        with open(file_path, "r", encoding="utf-8") as file:
-            for line in file:
+        try:
+            # Detect file encoding
+            with open(file_path, "rb") as file:
+                raw_data = file.read()
+                result = chardet.detect(raw_data)  # Detect encoding
+                encoding = result["encoding"]
+
+            # Read file with detected encoding
+            with open(file_path, "r", encoding=encoding, errors="replace") as file:
+                content = file.read()
+
+            for line in content.splitlines():
                 pdf.cell(200, 10, line, ln=True)
 
-        save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
-        if save_path:
-            pdf.output(save_path)
-            messagebox.showinfo("Success", "TXT converted to PDF successfully!")
+            save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
+            if save_path:
+                pdf.output(save_path)
+                messagebox.showinfo("Success", "TXT converted to PDF successfully!")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to convert TXT: {e}")
 
     def convert_excel_to_pdf(self):
         file_path = filedialog.askopenfilename(filetypes=[("Excel Files", "*.xlsx")])
