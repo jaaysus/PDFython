@@ -1,9 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import pdfplumber
-from fpdf import FPDF
 import openpyxl
 import chardet
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 
 class PDFythonApp:
@@ -11,7 +12,6 @@ class PDFythonApp:
         self.root = root
         self.root.title("PDFython - PDF Management")
         self.root.geometry("400x300")
-
         self.create_widgets()
 
     def create_widgets(self):
@@ -25,29 +25,40 @@ class PDFythonApp:
         if not file_path:
             return
 
-        pdf = FPDF()
-        pdf.set_auto_page_break(auto=True, margin=10)
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
-
         try:
-            # Detect file encoding
+            
             with open(file_path, "rb") as file:
                 raw_data = file.read()
-                result = chardet.detect(raw_data)  # Detect encoding
+                result = chardet.detect(raw_data)  
                 encoding = result["encoding"]
 
-            # Read file with detected encoding
+            
             with open(file_path, "r", encoding=encoding, errors="replace") as file:
                 content = file.read()
 
-            for line in content.splitlines():
-                pdf.cell(200, 10, line, ln=True)
-
             save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
-            if save_path:
-                pdf.output(save_path)
-                messagebox.showinfo("Success", "TXT converted to PDF successfully!")
+            if not save_path:
+                return
+
+            
+            c = canvas.Canvas(save_path, pagesize=letter)
+            c.setFont("Helvetica", 12)
+
+            
+            y_position = 750  
+
+            for line in content.splitlines():
+                c.drawString(72, y_position, line)  
+                y_position -= 14  
+
+                
+                if y_position < 72:
+                    c.showPage()
+                    c.setFont("Helvetica", 12)
+                    y_position = 750
+
+            c.save()
+            messagebox.showinfo("Success", "TXT converted to PDF successfully!")
 
         except Exception as e:
             messagebox.showerror("Error", f"Failed to convert TXT: {e}")
@@ -57,35 +68,56 @@ class PDFythonApp:
         if not file_path:
             return
 
-        wb = openpyxl.load_workbook(file_path)
-        ws = wb.active
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
+        try:
+            wb = openpyxl.load_workbook(file_path)
+            ws = wb.active
 
-        for row in ws.iter_rows(values_only=True):
-            pdf.cell(200, 10, " | ".join(str(cell) for cell in row), ln=True)
+            save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
+            if not save_path:
+                return
 
-        save_path = filedialog.asksaveasfilename(defaultextension=".pdf", filetypes=[("PDF Files", "*.pdf")])
-        if save_path:
-            pdf.output(save_path)
+            
+            c = canvas.Canvas(save_path, pagesize=letter)
+            c.setFont("Helvetica", 12)
+
+            
+            y_position = 750
+            for row in ws.iter_rows(values_only=True):
+                line = " | ".join(str(cell) for cell in row)
+                c.drawString(72, y_position, line)
+                y_position -= 14
+
+                if y_position < 72:
+                    c.showPage()
+                    c.setFont("Helvetica", 12)
+                    y_position = 750
+
+            c.save()
             messagebox.showinfo("Success", "Excel converted to PDF successfully!")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to convert Excel: {e}")
 
     def extract_text_from_pdf(self):
         file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
         if not file_path:
             return
 
-        extracted_text = ""
-        with pdfplumber.open(file_path) as pdf:
-            for page in pdf.pages:
-                extracted_text += page.extract_text() + "\n"
+        try:
+            extracted_text = ""
+            with pdfplumber.open(file_path) as pdf:
+                for page in pdf.pages:
+                    extracted_text += page.extract_text() + "\n"
 
-        save_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
-        if save_path:
-            with open(save_path, "w", encoding="utf-8") as file:
-                file.write(extracted_text)
-            messagebox.showinfo("Success", "Text extracted and saved!")
+            save_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text Files", "*.txt")])
+            if save_path:
+                with open(save_path, "w", encoding="utf-8") as file:
+                    file.write(extracted_text)
+                messagebox.showinfo("Success", "Text extracted and saved!")
+
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to extract text: {e}")
+
 
 if __name__ == "__main__":
     root = tk.Tk()
