@@ -4,7 +4,7 @@ from core.txt_to_pdf import convert_txt_to_pdf
 from core.excel_to_pdf import convert_excel_to_pdf
 from core.pdf_text_extractor import extract_text_from_pdf
 from core.pdf_to_word import convert_pdf_to_word
-from core.pdf_to_sound import convert_pdf_to_sound  # Import the standalone function
+from core.pdf_to_sound import convert_pdf_to_sound  
 
 class AppWindow:
     def __init__(self, root):
@@ -79,7 +79,7 @@ class AppWindow:
         file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
         if file_path:
             try:
-                audio_file = convert_pdf_to_sound(file_path)  # Use the standalone function
+                audio_file = convert_pdf_to_sound(file_path)  
                 messagebox.showinfo("Success", f"Audio file saved as {audio_file}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to convert PDF to sound: {e}")
