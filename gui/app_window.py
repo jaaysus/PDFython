@@ -4,13 +4,16 @@ from core.txt_to_pdf import convert_txt_to_pdf
 from core.excel_to_pdf import convert_excel_to_pdf
 from core.pdf_text_extractor import extract_text_from_pdf
 from core.pdf_to_word import convert_pdf_to_word
-from core.pdf_to_sound import convert_pdf_to_sound
+from core.pdf_to_sound import PDFToSoundConverter
 
 class AppWindow:
     def __init__(self, root):
         self.root = root
         self.root.title("PDFython - PDF Management")
-        self.root.geometry("300x250")  # Increased height for new buttons
+        self.root.geometry("400x300")
+
+        # PDF to Sound Converter
+        self.converter = PDFToSoundConverter()
 
         # Buttons
         self.txt_to_pdf_btn = tk.Button(root, text="Convert TXT to PDF", command=self.convert_txt)
@@ -25,7 +28,7 @@ class AppWindow:
         self.pdf_to_word_btn = tk.Button(root, text="Convert PDF to Word", command=self.convert_pdf_to_word)
         self.pdf_to_word_btn.pack(pady=5)
 
-        self.pdf_to_sound_btn = tk.Button(root, text="Convert PDF to Sound", command=self.convert_pdf_to_sound)
+        self.pdf_to_sound_btn = tk.Button(root, text="Convert PDF to Sound", command=self.open_pdf_to_sound)
         self.pdf_to_sound_btn.pack(pady=5)
 
         self.exit_btn = tk.Button(root, text="Exit", command=root.quit)
@@ -75,11 +78,11 @@ class AppWindow:
                 except Exception as e:
                     messagebox.showerror("Error", f"Failed to convert PDF to Word: {e}")
 
-    def convert_pdf_to_sound(self):
+    def open_pdf_to_sound(self):
         file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
         if file_path:
             try:
-                convert_pdf_to_sound(file_path)
-                messagebox.showinfo("Success", "PDF file converted to sound successfully!")
+                audio_file = self.converter.convert_pdf_to_sound(file_path)
+                messagebox.showinfo("Success", f"Audio file saved as {audio_file}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to convert PDF to sound: {e}")

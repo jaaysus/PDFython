@@ -1,18 +1,24 @@
 import PyPDF2
-import pyttsx3
+from gtts import gTTS
+import os
 
-def convert_pdf_to_sound(pdf_path):
-    try:
-        # Extract text from PDF
-        with open(pdf_path, "rb") as file:
-            reader = PyPDF2.PdfReader(file)
-            text = ""
-            for page in reader.pages:
-                text += page.extract_text()
+class PDFToSoundConverter:
+    def __init__(self):
+        self.audio_file = "output.mp3"
 
-        # Convert text to speech
-        engine = pyttsx3.init()
-        engine.say(text)
-        engine.runAndWait()
-    except Exception as e:
-        raise Exception(f"Failed to convert PDF to sound: {e}")
+    def convert_pdf_to_sound(self, pdf_path):
+        """Convert PDF text to an audio file."""
+        try:
+            # Extract text from PDF
+            with open(pdf_path, "rb") as file:
+                reader = PyPDF2.PdfReader(file)
+                text = ""
+                for page in reader.pages:
+                    text += page.extract_text() + "\n"
+
+            # Convert text to speech
+            tts = gTTS(text, lang="en")
+            tts.save(self.audio_file)
+            return self.audio_file
+        except Exception as e:
+            raise Exception(f"Failed to convert PDF to sound: {e}")
