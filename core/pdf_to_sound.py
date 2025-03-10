@@ -2,7 +2,7 @@ import os
 import PyPDF2
 from gtts import gTTS
 
-def convert_pdf_to_sound(pdf_path):
+def convert_pdf_to_sound(pdf_path, lang="en"):
     """Convert PDF text to an audio file with the original file name in the same directory."""
     try:
         # Extract text from PDF
@@ -18,7 +18,7 @@ def convert_pdf_to_sound(pdf_path):
         audio_file = os.path.join(directory, f"{file_name}.mp3")
 
         # Convert text to speech
-        tts = gTTS(text, lang="en")
+        tts = gTTS(text, lang=lang)  # Use the selected language
         tts.save(audio_file)
         return audio_file
     except Exception as e:
