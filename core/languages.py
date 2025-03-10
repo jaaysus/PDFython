@@ -1,4 +1,3 @@
-
 SUPPORTED_LANGUAGES = {
     "en": "English",
     "es": "Spanish",

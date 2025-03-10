@@ -4,9 +4,11 @@ from core.pdf_to_sound import convert_pdf_to_sound
 from core.languages import SUPPORTED_LANGUAGES
 
 class LanguageSelectionWindow:
-    def __init__(self, master, file_path):
+    def __init__(self, master, file_path, progress, root):
         self.master = master
         self.file_path = file_path
+        self.progress = progress  # Pass the progress bar
+        self.root = root  # Pass the root window
 
     def open_window(self):
         lang_window = tk.Toplevel(self.master)
@@ -29,8 +31,18 @@ class LanguageSelectionWindow:
             selected_lang_code = [code for code, name in SUPPORTED_LANGUAGES.items() if name == selected_language_name][0]
             lang_window.destroy()
 
+            # Reset progress bar
+            self.progress["value"] = 0
+            self.root.update_idletasks()
+
+            # Function to update the progress bar
+            def update_progress(percent):
+                self.progress["value"] = percent
+                self.root.update_idletasks()
+
             try:
-                audio_file = convert_pdf_to_sound(self.file_path, lang=selected_lang_code)
+                # Convert PDF to sound with progress updates
+                audio_file = convert_pdf_to_sound(self.file_path, lang=selected_lang_code, progress_callback=update_progress)
                 messagebox.showinfo("Success", f"Audio file saved as {audio_file}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to convert PDF to sound: {e}")
