@@ -4,16 +4,13 @@ from core.txt_to_pdf import convert_txt_to_pdf
 from core.excel_to_pdf import convert_excel_to_pdf
 from core.pdf_text_extractor import extract_text_from_pdf
 from core.pdf_to_word import convert_pdf_to_word
-from core.pdf_to_sound import PDFToSoundConverter
+from core.pdf_to_sound import convert_pdf_to_sound  # Import the standalone function
 
 class AppWindow:
     def __init__(self, root):
         self.root = root
         self.root.title("PDFython - PDF Management")
         self.root.geometry("400x300")
-
-        # PDF to Sound Converter
-        self.converter = PDFToSoundConverter()
 
         # Buttons
         self.txt_to_pdf_btn = tk.Button(root, text="Convert TXT to PDF", command=self.convert_txt)
@@ -82,7 +79,7 @@ class AppWindow:
         file_path = filedialog.askopenfilename(filetypes=[("PDF Files", "*.pdf")])
         if file_path:
             try:
-                audio_file = self.converter.convert_pdf_to_sound(file_path)
+                audio_file = convert_pdf_to_sound(file_path)  # Use the standalone function
                 messagebox.showinfo("Success", f"Audio file saved as {audio_file}")
             except Exception as e:
                 messagebox.showerror("Error", f"Failed to convert PDF to sound: {e}")
